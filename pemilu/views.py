@@ -20,6 +20,7 @@ def index(request):
                 "classes": f'col-md-{col_size} col-sm-{col_size} col-lg-{col_size}'
             }
             return render(request, 'vote.html', context)
+        return redirect("/")
     return render(request, 'index.html')
 
 
@@ -27,7 +28,10 @@ def vote(request):
     if request.method == "POST":
         current_password = get_object_or_404(Password, current = True)
         pwd  = request.POST["password"]
-        no   = request.POST["no"]
+        if "no" in request.POST:
+            no   = request.POST["no"]
+        else:
+            no = 69
         year = request.POST["year"]
         print(no, year)
         if pwd == current_password.password:
@@ -37,7 +41,7 @@ def vote(request):
 
 
 def quick_count(request):
-    candidates = get_list_or_404(Candidate, current = True)
+    candidates = get_list_or_404(Candidate)
     count = {}
     for c in candidates:
         count[c.name] = len(Vote.objects.filter(no=c.no, year=c.year))
